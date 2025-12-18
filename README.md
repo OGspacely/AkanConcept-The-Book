@@ -1,4 +1,4 @@
-# Akan Concept Landing Page
+# Akan Concept(Book Lending Website) Landing Page
 
 Bootstrap-based promotional site for the Akan Concept book. The page highlights pricing tiers, reader reviews, and contact options while featuring responsive navigation and modal/offcanvas components.
 
