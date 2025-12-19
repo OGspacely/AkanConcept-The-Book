@@ -46,10 +46,28 @@
           <li class="nav-item ms-2 d-none d-md-inline" >
             <a href="#pricing" class="btn btn-secondary">buy now</a>
           </li>
+          <li class="nav-item ms-md-3" id="account-nav"></li>
         </ul>
        </div>
     </div>
   </nav>
+
+  <div id="profile-banner" class="bg-light border-bottom py-2 d-none">
+    <div class="container-xxl d-flex flex-column flex-md-row align-items-md-center justify-content-md-between gap-2">
+      <div class="d-flex align-items-center gap-2">
+        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+          <i class="bi bi-person-fill"></i>
+        </div>
+        <div>
+          <strong id="profile-name"></strong>
+          <div class="text-muted small" id="profile-email"></div>
+        </div>
+      </div>
+      <div>
+        <a href="#contact" class="btn btn-outline-primary btn-sm">Need help?</a>
+      </div>
+    </div>
+  </div>
 
   <!-- intro section -->
   <section id="intro">
@@ -450,6 +468,66 @@
   <script>
     const tooltips = document.querySelectorAll('.tt')
     tooltips.forEach(t=>{new bootstrap.Tooltip(t)})
+
+    const ACCOUNT_STORAGE_KEY = 'akan.user'
+
+    const renderAccountArea = () => {
+      const accountNav = document.getElementById('account-nav')
+      const profileBanner = document.getElementById('profile-banner')
+      const profileName = document.getElementById('profile-name')
+      const profileEmail = document.getElementById('profile-email')
+
+      if (!accountNav) {
+        return
+      }
+
+      const saved = localStorage.getItem(ACCOUNT_STORAGE_KEY)
+
+      if (!saved) {
+        accountNav.innerHTML = '<a href="auth.html" class="btn btn-outline-light">Log in / Sign up</a>'
+        if (profileBanner) {
+          profileBanner.classList.add('d-none')
+        }
+        if (profileName) {
+          profileName.textContent = ''
+        }
+        if (profileEmail) {
+          profileEmail.textContent = ''
+        }
+        return
+      }
+
+      const profile = JSON.parse(saved)
+      accountNav.innerHTML = `
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle me-1"></i>${profile.name || 'My Profile'}
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><span class="dropdown-item-text text-muted">${profile.email || ''}</span></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#contact">Support</a></li>
+            <li><button class="dropdown-item" type="button" data-action="logout">Log out</button></li>
+          </ul>
+        </div>
+      `
+
+      const logoutBtn = accountNav.querySelector('[data-action="logout"]')
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+          localStorage.removeItem(ACCOUNT_STORAGE_KEY)
+          renderAccountArea()
+        })
+      }
+
+      if (profileBanner && profileName && profileEmail) {
+        profileBanner.classList.remove('d-none')
+        profileName.textContent = profile.name || 'Welcome back'
+        profileEmail.textContent = profile.email || ''
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', renderAccountArea)
   </script>
 </body>
 </html>
